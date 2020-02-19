@@ -29,8 +29,14 @@
 #define PIN_EXTVCC 4
 
 static char tag[] = "test_SH1106";
+static u8g2_t u8g2; // a structure which will contain all the data for one display
+static bool disp_init = false;
 
-void task_test_SH1106(void *ignore) {
+
+void checkDispInit(void) {
+
+	if(disp_init) return;
+	disp_init = true;
 	u8g2_esp32_hal_t u8g2_esp32_hal = U8G2_ESP32_HAL_DEFAULT;
 	u8g2_esp32_hal.clk   = PIN_CLK;
 	u8g2_esp32_hal.mosi  = PIN_MOSI;
@@ -41,28 +47,48 @@ void task_test_SH1106(void *ignore) {
 	u8g2_esp32_hal_init(u8g2_esp32_hal);
 
 
-	u8g2_t u8g2; // a structure which will contain all the data for one display
-	ESP_LOGW(tag, "Starting OLED test!");
+	ESP_LOGI(tag,"init");
 	u8g2_Setup_sh1106_128x64_ext_vcc(
 		&u8g2,
 		U8G2_R0,
 		u8g2_esp32_spi_byte_cb,
 		u8g2_esp32_gpio_and_delay_cb);  // init u8g2 structure
 
-	u8g2_InitDisplay(&u8g2); // send init sequence to the display, display is in sleep mode after this,
+	u8g2_InitDisplay(&u8g2); // send init sequence to the display, display is in sleep mode after this
 
+}
+
+void task_hello_SH1106(void *pl) {
+
+	char pwrlvl[] = "1";
+
+	checkDispInit();
+
+	pwrlvl[0] = (char)pl+'0';
+
+	ESP_LOGI(tag,"hello [%s]",pwrlvl);
 	u8g2_SetPowerSave(&u8g2, 0); // wake up display
 	u8g2_ClearBuffer(&u8g2);
-	ESP_LOGI(tag, "Draw box1");
-	u8g2_DrawBox(&u8g2, 10,20, 20, 30);
+	ESP_LOGI(tag, "Draw Frame");
+	u8g2_DrawFrame(&u8g2, 0,0, 128, 64);
 	ESP_LOGI(tag, "Draw box2");
 	u8g2_DrawBox(&u8g2, 70,50, 40, 10);
 	ESP_LOGI(tag, "Draw string");
 	u8g2_SetFont(&u8g2, u8g2_font_ncenB14_tr);
-	u8g2_DrawStr(&u8g2, 0,15,"Hello World!");
+	u8g2_DrawStr(&u8g2, 2,17,"Power Level");
+	u8g2_DrawStr(&u8g2, 55,34,pwrlvl);
 	u8g2_SendBuffer(&u8g2);
 
-	ESP_LOGW(tag, "All done!");
+	vTaskDelete(NULL);
+}
+
+void task_sleep_SH1106(void *ignore) {
+
+	checkDispInit();
+	ESP_LOGI(tag,"sleep");
+	u8g2_ClearBuffer(&u8g2);
+	u8g2_SendBuffer(&u8g2);
+	u8g2_SetPowerSave(&u8g2, 1); // wake up display
 
 	vTaskDelete(NULL);
 }
