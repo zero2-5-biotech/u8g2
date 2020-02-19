@@ -1,5 +1,5 @@
-set(COMPONENT_ADD_INCLUDEDIRS csrc)
-set(COMPONENT_SRCS "csrc/u8x8_setup.c"
+idf_component_register(SRCS "u8g2_esp32_hal.c" "test_SH1106G.c"
+					"csrc/u8x8_setup.c"
                     "csrc/u8x8_u8toa.c"
                     "csrc/u8x8_d_ssd1306_96x16.c"
                     "csrc/u8g2_d_memory.c"
@@ -86,7 +86,7 @@ set(COMPONENT_SRCS "csrc/u8x8_setup.c"
                     "csrc/u8x8_d_uc1701_mini12864.c"
                     "csrc/u8x8_u16toa.c"
                     "csrc/u8x8_d_a2printer.c"
-                    "csrc/u8x8_d_st7565.c")
-set(COMPONENT_NAME ".")
-
-register_component()
+                    "csrc/u8x8_d_st7565.c"
+					"csrc/u8x8_d_sh1106_128x64_ext_vcc.c"
+                       INCLUDE_DIRS "." "../" "../../main/" "csrc")
+					

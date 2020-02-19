@@ -673,6 +673,7 @@ uint8_t u8x8_byte_sed1520(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *arg_
 #define U8X8_MSG_GPIO_RESET 		U8X8_MSG_GPIO(U8X8_PIN_RESET)
 #define U8X8_MSG_GPIO_I2C_CLOCK	U8X8_MSG_GPIO(U8X8_PIN_I2C_CLOCK)
 #define U8X8_MSG_GPIO_I2C_DATA		U8X8_MSG_GPIO(U8X8_PIN_I2C_DATA)
+#define U8X8_MSG_GPIO_VCCEN			U8X8_MSG_GPIO(U8X8_PIN_VCCEN)
 
 
 #define U8X8_MSG_GPIO_CS1			U8X8_MSG_GPIO(U8X8_PIN_CS1)	/* KS0108 extra chip select */
@@ -704,6 +705,7 @@ uint8_t u8x8_byte_sed1520(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *arg_
 #define u8x8_gpio_SetSPIData(u8x8, v) u8x8_gpio_call(u8x8, U8X8_MSG_GPIO_SPI_DATA, (v))
 #define u8x8_gpio_SetI2CClock(u8x8, v) u8x8_gpio_call(u8x8, U8X8_MSG_GPIO_I2C_CLOCK, (v))
 #define u8x8_gpio_SetI2CData(u8x8, v) u8x8_gpio_call(u8x8, U8X8_MSG_GPIO_I2C_DATA, (v))
+#define u8x8_gpio_SetVCCEN(u8x8, v) u8x8_gpio_call(u8x8, U8X8_MSG_GPIO_VCCEN, (v))
 
 void u8x8_gpio_call(u8x8_t *u8x8, uint8_t msg, uint8_t arg) U8X8_NOINLINE;
 
