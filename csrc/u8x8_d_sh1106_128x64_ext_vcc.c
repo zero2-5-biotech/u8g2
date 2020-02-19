@@ -1,6 +1,13 @@
 /*
 
   u8x8_d_sh1106_128x64_ext_vcc.c
+
+  Driver for the FORMIKE ELECTRONIC CO.,LTD KWH0130LX03 OLED display
+
+  This display is an SPI controlled 1.3" 128x64 panel with a 16pin FPC.
+  NB: this is a common form factor for small OLED panels so will probably work
+  with other displays such as the GoldenMorning GME12864-74 available on Alibaba
+
   Copyright (c) 2020, Zero 2.5 Biotech Pte Ltd
 
   based on code from:
@@ -42,36 +49,27 @@
 #include "u8x8.h"
 
 
-
-/* more or less generic setup of all these small OLEDs */
+/* From the Formike KWH0130LX03 datasheet */
 static const uint8_t u8x8_d_sh1106_128x64_ext_vcc_init_seq[] = {
     
   U8X8_START_TRANSFER(),             	/* enable chip, delay is part of the transfer start */
   
   
-  U8X8_C(0x0ae),		                /* display off */
+  U8X8_C(0x0ae),		        /* display off */
   U8X8_CA(0x0d5, 0x080),		/* clock divide ratio (0x00=1) and oscillator frequency (0x8) */
   U8X8_CA(0x0a8, 0x03f),		/* multiplex ratio */
   U8X8_CA(0x0d3, 0x000),		/* display offset */
-  U8X8_C(0x040),		                /* set display start line to 0 */
-  U8X8_CA(0x08d, 0x014),		/* [2] charge pump setting (p62): 0x014 enable, 0x010 disable, SSD1306 only, should be removed for SH1106 */
-  U8X8_CA(0x020, 0x000),		/* page addressing mode */
-  
+  U8X8_C(0x040),		        /* set display start line to 0 */
+  U8X8_CA(0x0ad, 0x08a),		/* DC-DC ON/OFF Mode Set - DC off */
   U8X8_C(0x0a1),				/* segment remap a0/a1*/
   U8X8_C(0x0c8),				/* c0: scan dir normal, c8: reverse */
-  // Flipmode
-  // U8X8_C(0x0a0),				/* segment remap a0/a1*/
-  // U8X8_C(0x0c0),				/* c0: scan dir normal, c8: reverse */
-  
   U8X8_CA(0x0da, 0x012),		/* com pin HW config, sequential com pin config (bit 4), disable left/right remap (bit 5) */
-
-  U8X8_CA(0x081, 0x0cf), 		/* [2] set contrast control */
-  U8X8_CA(0x0d9, 0x0f1), 		/* [2] pre-charge period 0x022/f1*/
-  U8X8_CA(0x0db, 0x040), 		/* vcomh deselect level */  
-  // if vcomh is 0, then this will give the biggest range for contrast control issue #98
-  // restored the old values for the noname constructor, because vcomh=0 will not work for all OLEDs, #116
+  U8X8_CA(0x081, 0x0d0), 		/* [2] set contrast control */
+  U8X8_CA(0x0d9, 0x022), 		/* [2] pre-charge period 0x022 */
+  U8X8_CA(0x0db, 0x02c), 		/* vcomh deselect level */
   
-  U8X8_C(0x02e),				/* Deactivate scroll */ 
+  //U8X8_C(0x02e),				/* Deactivate scroll */
+  
   U8X8_C(0x0a4),				/* output ram to display */
   U8X8_C(0x0a6),				/* none inverted normal display mode */
     
@@ -129,12 +127,12 @@ static uint8_t u8x8_d_sh1106_generic(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
     */
     case U8X8_MSG_DISPLAY_SET_POWER_SAVE:
       if ( arg_int == 0 ){
-    	  u8x8_cad_SendSequence(u8x8, u8x8_d_sh1106_128x64_ext_vcc_powersave0_seq);
     	  u8x8_gpio_SetVCCEN(u8x8,1);
+    	  u8x8_cad_SendSequence(u8x8, u8x8_d_sh1106_128x64_ext_vcc_powersave0_seq);
       }
       else{
-    	  u8x8_gpio_SetVCCEN(u8x8,0);
     	  u8x8_cad_SendSequence(u8x8, u8x8_d_sh1106_128x64_ext_vcc_powersave1_seq);
+    	  u8x8_gpio_SetVCCEN(u8x8,0);
       }
       break;
     case U8X8_MSG_DISPLAY_SET_FLIP_MODE:
@@ -233,7 +231,7 @@ uint8_t u8x8_d_sh1106_128x64_ext_vcc(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
       u8x8_cad_SendSequence(u8x8, u8x8_d_sh1106_128x64_ext_vcc_init_seq);
       break;
     case U8X8_MSG_DISPLAY_SETUP_MEMORY:
-      u8x8_d_helper_display_setup_memory(u8x8, &u8x8_sh1106_128x64_ext_vcc_display_info);
+    	u8x8_d_helper_display_setup_memory(u8x8, &u8x8_sh1106_128x64_ext_vcc_display_info);
       break;
     default:
       return 0;

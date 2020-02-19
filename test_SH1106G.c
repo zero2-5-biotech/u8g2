@@ -42,6 +42,7 @@ void task_test_SH1106(void *ignore) {
 
 
 	u8g2_t u8g2; // a structure which will contain all the data for one display
+	ESP_LOGW(tag, "Starting OLED test!");
 	u8g2_Setup_sh1106_128x64_ext_vcc(
 		&u8g2,
 		U8G2_R0,
@@ -52,12 +53,16 @@ void task_test_SH1106(void *ignore) {
 
 	u8g2_SetPowerSave(&u8g2, 0); // wake up display
 	u8g2_ClearBuffer(&u8g2);
+	ESP_LOGI(tag, "Draw box1");
 	u8g2_DrawBox(&u8g2, 10,20, 20, 30);
+	ESP_LOGI(tag, "Draw box2");
+	u8g2_DrawBox(&u8g2, 70,50, 40, 10);
+	ESP_LOGI(tag, "Draw string");
 	u8g2_SetFont(&u8g2, u8g2_font_ncenB14_tr);
 	u8g2_DrawStr(&u8g2, 0,15,"Hello World!");
 	u8g2_SendBuffer(&u8g2);
 
-	ESP_LOGD(tag, "All done!");
+	ESP_LOGW(tag, "All done!");
 
 	vTaskDelete(NULL);
 }

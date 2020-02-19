@@ -185,6 +185,9 @@ uint8_t u8g2_esp32_gpio_and_delay_cb(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
 			if (u8g2_esp32_hal.cs != U8G2_ESP32_HAL_UNDEFINED) {
 				bitmask = bitmask | (1ull<<u8g2_esp32_hal.cs);
 			}
+			if (u8g2_esp32_hal.ext_vcc != U8G2_ESP32_HAL_UNDEFINED) {
+				bitmask = bitmask | (1ull<<u8g2_esp32_hal.ext_vcc);
+			}
 
             if (bitmask==0) {
             	break;
@@ -223,6 +226,12 @@ uint8_t u8g2_esp32_gpio_and_delay_cb(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int,
 			if (u8g2_esp32_hal.sda != U8G2_ESP32_HAL_UNDEFINED) {
 				gpio_set_level(u8g2_esp32_hal.sda, arg_int);
 //				printf("%c",(arg_int==1?'D':'d'));
+			}
+			break;
+
+		case U8X8_MSG_GPIO_VCCEN:
+			if (u8g2_esp32_hal.ext_vcc != U8G2_ESP32_HAL_UNDEFINED) {
+				gpio_set_level(u8g2_esp32_hal.ext_vcc, arg_int);
 			}
 			break;
 
