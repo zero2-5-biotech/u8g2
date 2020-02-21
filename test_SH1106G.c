@@ -60,13 +60,9 @@ void checkDispInit(void) {
 
 void task_hello_SH1106(void *pl) {
 
-	char pwrlvl[] = "1";
 
 	checkDispInit();
 
-	pwrlvl[0] = (char)pl+'0';
-
-	ESP_LOGI(tag,"hello [%s]",pwrlvl);
 	u8g2_SetPowerSave(&u8g2, 0); // wake up display
 	u8g2_ClearBuffer(&u8g2);
 	ESP_LOGI(tag, "Draw Frame");
@@ -76,7 +72,26 @@ void task_hello_SH1106(void *pl) {
 	ESP_LOGI(tag, "Draw string");
 	u8g2_SetFont(&u8g2, u8g2_font_ncenB14_tr);
 	u8g2_DrawStr(&u8g2, 2,17,"Power Level");
-	u8g2_DrawStr(&u8g2, 55,34,pwrlvl);
+	switch((int)pl){
+	case 0:
+		u8g2_DrawStr(&u8g2, 30,34,"Off");
+		break;
+	case 1:
+		u8g2_DrawStr(&u8g2, 30,34,"Standby");
+		break;
+	case 2:
+		u8g2_DrawStr(&u8g2, 30,34,"Low");
+		break;
+	case 3:
+		u8g2_DrawStr(&u8g2, 30,34,"Medium");
+		break;
+	case 4:
+		u8g2_DrawStr(&u8g2, 30,34,"High");
+		break;
+	default:
+		u8g2_DrawStr(&u8g2, 30,34,"Error");
+		break;
+	}
 	u8g2_SendBuffer(&u8g2);
 
 	vTaskDelete(NULL);
