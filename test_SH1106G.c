@@ -31,6 +31,7 @@
 static char tag[] = "test_SH1106";
 static u8g2_t u8g2; // a structure which will contain all the data for one display
 static bool disp_init = false;
+extern int AltConcPM2_5;
 
 
 void checkDispInit(void) {
@@ -67,31 +68,54 @@ void task_hello_SH1106(void *pl) {
 	u8g2_ClearBuffer(&u8g2);
 	ESP_LOGI(tag, "Draw Frame");
 	u8g2_DrawFrame(&u8g2, 0,0, 128, 64);
-	ESP_LOGI(tag, "Draw box2");
-	u8g2_DrawBox(&u8g2, 70,50, 40, 10);
 	ESP_LOGI(tag, "Draw string");
 	u8g2_SetFont(&u8g2, u8g2_font_ncenB14_tr);
-	u8g2_DrawStr(&u8g2, 2,17,"Power Level");
+	u8g2_DrawStr(&u8g2, 5,17,"Power Level");
 	switch((int)pl){
 	case 0:
-		u8g2_DrawStr(&u8g2, 30,34,"Off");
+		u8g2_DrawStr(&u8g2, 50,34,"Off");
 		break;
 	case 1:
 		u8g2_DrawStr(&u8g2, 30,34,"Standby");
 		break;
 	case 2:
-		u8g2_DrawStr(&u8g2, 30,34,"Low");
+		u8g2_DrawStr(&u8g2, 50,34,"Low");
 		break;
 	case 3:
 		u8g2_DrawStr(&u8g2, 30,34,"Medium");
 		break;
 	case 4:
-		u8g2_DrawStr(&u8g2, 30,34,"High");
+		u8g2_DrawStr(&u8g2, 40,34,"High");
 		break;
 	default:
 		u8g2_DrawStr(&u8g2, 30,34,"Error");
 		break;
 	}
+	u8g2_SendBuffer(&u8g2);
+
+	vTaskDelete(NULL);
+}
+
+void task_pm_SH1106(void *ignore){
+	char str[20];
+	checkDispInit();
+	u8g2_SetPowerSave(&u8g2, 0); // wake up display
+
+	u8g2_SetFont(&u8g2, u8g2_font_ncenB10_tr);
+	u8g2_DrawStr(&u8g2, 5,55,"PM");
+	u8g2_SetFont(&u8g2, u8g2_font_5x7_tn);
+	u8g2_DrawStr(&u8g2, 30,60,"2.5");
+	u8g2_SetFont(&u8g2, u8g2_font_ncenB10_tr);
+	u8g2_DrawStr(&u8g2, 45,55,":");
+	u8g2_SetDrawColor(&u8g2,0);
+	u8g2_DrawBox(&u8g2, 52,43, 30, 15);
+	u8g2_SetDrawColor(&u8g2,1);
+	sprintf(str,"%d",AltConcPM2_5);
+	u8g2_DrawStr(&u8g2, 52,55,str);
+	u8g2_DrawStr(&u8g2, 82,55,"ug/m");
+	u8g2_SetFont(&u8g2, u8g2_font_5x7_tn);
+	u8g2_DrawStr(&u8g2, 119,49,"3");
+
 	u8g2_SendBuffer(&u8g2);
 
 	vTaskDelete(NULL);
