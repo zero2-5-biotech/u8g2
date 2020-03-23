@@ -61,7 +61,7 @@ static const uint8_t u8x8_d_sh1106_128x64_ext_vcc_init_seq[] = {
   U8X8_CA(0x0d3, 0x000),		/* display offset */
   U8X8_C(0x040),		        /* set display start line to 0 */
   U8X8_CA(0x0ad, 0x08a),		/* DC-DC ON/OFF Mode Set - DC off */
-  U8X8_C(0x0a1),				/* segment remap a0/a1*/
+  U8X8_C(0x0a0),				/* segment remap a0/a1*/
   U8X8_C(0x0c0),				/* c0: scan dir normal, c8: reverse */
   U8X8_CA(0x0da, 0x012),		/* com pin HW config, sequential com pin config (bit 4), disable left/right remap (bit 5) */
   U8X8_CA(0x081, 0x0d0), 		/* [2] set contrast control */
@@ -93,7 +93,7 @@ static const uint8_t u8x8_d_sh1106_128x64_ext_vcc_powersave1_seq[] = {
 
 static const uint8_t u8x8_d_sh1106_128x64_ext_vcc_flip0_seq[] = {
   U8X8_START_TRANSFER(),             	/* enable chip, delay is part of the transfer start */
-  U8X8_C(0x0a1),				/* segment remap a0/a1*/
+  U8X8_C(0x0a0),				/* segment remap a0/a1*/
   U8X8_C(0x0c0),				/* c0: scan dir normal, c8: reverse */
   U8X8_END_TRANSFER(),             	/* disable chip */
   U8X8_END()             			/* end of sequence */
@@ -101,7 +101,7 @@ static const uint8_t u8x8_d_sh1106_128x64_ext_vcc_flip0_seq[] = {
 
 static const uint8_t u8x8_d_sh1106_128x64_ext_vcc_flip1_seq[] = {
   U8X8_START_TRANSFER(),             	/* enable chip, delay is part of the transfer start */
-  U8X8_C(0x0a0),				/* segment remap a0/a1*/
+  U8X8_C(0x0a1),				/* segment remap a0/a1*/
   U8X8_C(0x0c8),				/* c0: scan dir normal, c8: reverse */
   U8X8_END_TRANSFER(),             	/* disable chip */
   U8X8_END()             			/* end of sequence */
